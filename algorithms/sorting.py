@@ -33,7 +33,7 @@ class Sorter:
                 O(n * log(n)) - best case or O(n) natural variant and \
                 O(n * log(n)) - average case."
         if len(items) <= 1:
-            return items[:]
+            return items
 
         middle = len(items)/2
         left = self.mergesort(items[:middle])
@@ -47,8 +47,34 @@ class Sorter:
             return left + right
         elif left[0] <= right[0]:
             return left[:1] + self.merge(left[1:], right)
-        else:
-            return right[:1] + self.merge(left, right[1:])
+        return right[:1] + self.merge(left, right[1:])
+
+    def quicksort(self, items):
+        "Uses Quick Sort to sort a list in \
+                O(n^2) - worst case, \
+                O(n * log(n)) - best case \
+                O(n * log(n)) - average case."
+        less = []
+        greater = []
+
+        if len(items) <= 1:
+            return items
+
+        pivot_item = items[len(items)/2]
+        items.remove(pivot_item)
+
+        for i in items:
+            if i <= pivot_item:
+                less.append(i)
+            else:
+                greater.append(i)
+
+        left = self.quicksort(less)
+        right = self.quicksort(greater)
+        left.append(pivot_item)
+        left.extend(right)
+        return left
+
 
 class TestSorter(unittest.TestCase):
 
@@ -76,6 +102,11 @@ class TestSorter(unittest.TestCase):
         left = range(3, 7)
         sorted = self.sorter.merge(left, right)
         self.assertEqual(sorted, range(7))
+
+    def test_quicksort(self):
+        random.shuffle(self.seq)
+        sorted = self.sorter.quicksort(self.seq)
+        self.assertEqual(sorted, range(10))
 
 if __name__ == '__main__':
     unittest.main()
